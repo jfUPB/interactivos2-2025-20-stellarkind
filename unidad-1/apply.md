@@ -33,3 +33,8 @@ A nivel lógico, el sistema funciona como una “máquina de interpretación” 
 
   
 **FASE 6: TINKER**
+
+Actividad 4
+---
+
+[Mi versión del ejercicio](https://editor.p5js.org/stellarkind/full/aAtw8ss5V)
