@@ -29,6 +29,8 @@ En este escenario profesional, me imagino siendo parte de equipos creativos que 
 El ejemplo que decidí analizar: [Generative Design P_2_1_3_04](https://editor.p5js.org/generative-design/sketches/P_2_1_3_04)
 Mi 
 
+- [Mi versión de Generative Design P_2_1_3_04](https://editor.p5js.org/stellarkind/full/prT-lJrs7)
+
 _**Cómo funciona el ejemplo original?**_  
 El referente original genera una retícula de módulos visuales donde las formas geométricas (rectángulos o elipses) se transforman con rotaciones, escalas y apilamientos sucesivos. Las teclas 1, 2 o 3 permiten cambiar el modo de visualización, y las flechas ajustan el número de filas y columnas del grid.
 El código utiliza la posición del mouse para definir dos parámetros interactivos: 1, La cantidad de repeticiones de las figuras (count), que controla cuántas veces se apila o multiplica la forma. Y 2, El factor de rotación (para), que varía en función de la posición vertical del cursor. Estos parámetros permiten generar visuales dinámicos en tiempo real, ajustados a la interacción del usuario, y por tanto según la actividad son los que decidí modificar.
