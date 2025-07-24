@@ -33,6 +33,11 @@ _Vuelve a pensar en la pregunta de la Actividad 01: “¿Qué posibilidades cree
 _¿Qué estrategia de aprendizaje de esta unidad (ver videos, discutir en grupo, analizar referentes, deconstruir código) te ha funcionado mejor hasta ahora?_
 - Analizar códigos, ver videos y ver documentación, además de diversificar mis referentes pues de cierta manera siento como que mi forma de pensar ha evolucionado.
 
+---
 ### Actividad #7:
 
-
+**Coevaluación**
+1. Ana Sofía Misas Gutierrez.
+2. [misisopi](https://github.com/jfUPB/interactivos2-2025-20-misisopi/blob/unidad1/apply/unidad-1/apply.md)
+3. El código de sofi está bien estructurado y llegó a las mismas funciones que el original lo cual me parece sorprendente.
+4. 
