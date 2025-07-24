@@ -18,9 +18,9 @@ _Piensa en los referentes que vimos. ¿Qué tienen en común sus trabajos?_
 - Todos parecieran tener un enfoque matemático/geométrico, que utilizan la repetición y variación como forma de expresión generando patrones y estructuras visuales.
 
 _¿Qué papel juega la aleatoriedad en los sketches básicos que creaste en la Actividad 04?_
-- En general fueron 3 cosas principales con las que jugué implementando algo de aleatoriedad: Los colores, las formas y los tamaños básicamente, a pesar que delimité una lista de cada uno implementé sistemas aleatorios para que cada iteración fuese diferente.
-
-**Parte 2:**
+- En general fueron 3 cosas principales con las que jugué implementando algo de aleatoriedad: Los colores, las formas y los tamaños básicamente, a pesar que delimité una lista de cada uno implementé sistemas aleatorios para que cada iteración fuese diferente.  
+  
+**Parte 2:**  
 _La Actividad 05 te pedía explícitamente “disfruta del proceso, experimenta, juega, diviértete”. Describe un momento durante esa actividad en el que te sentiste realmente explorando o jugando, y qué descubriste en ese momento._
 - Realmente siendo sinceros no lo hice porque me frustré bastante, pues comparaba mucho mi canvas, el resultado visual y responsividad del original con mi versión, aparte que no pude hacer todo lo que quería.
 
