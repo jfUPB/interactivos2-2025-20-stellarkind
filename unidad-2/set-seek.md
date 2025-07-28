@@ -18,4 +18,16 @@ OUTPUT
 La salida es un videoclip generativo que se usa de fondo del concierto donde las letras vibran, colapsan, se reforman o se integran como formas plásticas; hay una fusión entre texto, imagen y sonido, donde el significado de las palabras se refuerza con la forma en que aparecen.
 El output no solo transmite el mensaje de la canción, sino que lo convierte en experiencia sensorial envolvente.
 
+### Actividad 2:
+**¿Qué elemento del diseño te parece más innovador y por qué?**
+Uno de los elementos más innovadores es la _agencia intuitiva del artista_, que convierte su propio cuerpo, voz y expresividad. El sistema no le exige aprender a manipular tecnología, sino que integra su talento orgánico como motor central del diseño. Esto establece una relación profundamente simbiótica entre la performance y el sistema generativo, que transforma el escenario en una experiencia viva y emocional. Además, el uso de inputs emocionales del público en la tercera fase —sus propias palabras— aporta una dimensión íntima e impredecible. La obra deja de ser una representación pasiva para convertirse en una experiencia co-creada. El hecho de que esas palabras sean transformadas en tiempo real por el “fuego” de Nerón simboliza una sanación compartida que es visual, simbólica y emocional.
+
+**¿Cómo cambiaría la experiencia si se eliminara un input?**
+Eliminar, por ejemplo, el input del público en la fase de revelación (las palabras enviadas), reduciría notablemente la catarsis colectiva y el sentido de coautoría emocional. El público pasaría de ser un entorno activo a un espectador pasivo, y se perdería ese momento de empatía visual en el que sus emociones son reconocidas y transformadas.
+Esto despojaría a la experiencia de su dimensión generativa más rica: la conexión humana impredecible, justo lo que al fin y al cabo busca Nerón al compartir su experiencia de vida a través de la música. La narrativa dejaría de ser una catarfis-epifanica compartida para convertirse en una historia cerrada, por más bella que sea. Justamente, lo emocionante del proyecto es que nadie —ni artista, ni público— sabe exactamente qué sucederá, y eso le da vida al ritual (como le dice el profe).
+
+### Actividad 3:
+El **artista** considero que es el que tiene mayor agencia, que convierte su propio cuerpo, voz y expresividad en un instrumento generativo, y ya que al fin y al cabo sus letras y su mensaje son la base de toda la composición que da pie a la catarsis en el público y lo influencia, de ahí al uso de inputs emocionales del público.  
+
+**El documento dice que el objetivo es generar “EPIFANÍAS” en lugar de “empatía”. ¿Qué crees que significa esto en el contexto de una experiencia inmersiva?**
 
