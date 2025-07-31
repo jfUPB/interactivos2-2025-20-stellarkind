@@ -27,7 +27,17 @@ Eliminar, por ejemplo, el input del público en la fase de revelación (las pala
 Esto despojaría a la experiencia de su dimensión generativa más rica: la conexión humana impredecible, justo lo que al fin y al cabo busca Nerón al compartir su experiencia de vida a través de la música. La narrativa dejaría de ser una catarfis-epifanica compartida para convertirse en una historia cerrada, por más bella que sea. Justamente, lo emocionante del proyecto es que nadie —ni artista, ni público— sabe exactamente qué sucederá, y eso le da vida al ritual (como le dice el profe).
 
 ### Actividad 3:
+
+**Explica con tus propias palabras la diferencia entre un “evento” en una película tradicional y un “nodo generativo” en la experiencia de “Prometeo”**  
+En una película tradicional, un evento es una acción, giro narrativo o momento importante que ya está escrito y fijado de antemano. Por ejemplo, un personaje descubre un secreto, alguien muere, o sucede un conflicto. Un nodo generativo es un punto clave del sistema narrativo, pero no es fijo ni estático como en una película. Es más bien una posibilidad de transformación, que se activa y se moldea en tiempo real dependiendo de inputs.
+
+**¿Quién crees que tiene más “poder” o “agencia” en la creación de la experiencia final de “Prometeo”: el artista, el público o los diseñadores del sistema? Justifica tu respuesta.**  
 El **artista** considero que es el que tiene mayor agencia, que convierte su propio cuerpo, voz y expresividad en un instrumento generativo, y ya que al fin y al cabo sus letras y su mensaje son la base de toda la composición que da pie a la catarsis en el público y lo influencia, de ahí al uso de inputs emocionales del público.  
 
 **El documento dice que el objetivo es generar “EPIFANÍAS” en lugar de “empatía”. ¿Qué crees que significa esto en el contexto de una experiencia inmersiva?**
+Una epifanía es una revelación súbita y transformadora. Siento que cuando en el documento se habla de buscar epifanías en lugar de empatía, se están refiriendo a algo más profundo y transformador. La empatía es conectar con el otro, como cuando ves una película y entiendes por lo que pasa el personaje, te duele o te alegra con él. Pero una epifanía es más como cuando algo te hace clic adentro, cuando entiendes algo nuevo que no sabías ni que necesitabas entender.
+
+En una experiencia inmersiva como “Prometeo”, no se trata de decir “ay, pobre Nerón, entiendo su dolor”, sino de que lo que ves y escuchas te devuelva algo de ti misma. Como si el sistema, el artista y el espacio se alinearan para mostrarte un espejo raro, donde aparece tu miedo, tu soledad, o lo que sea, y de repente se transforma en algo bello. Y eso te transforma también a ti.
+
+No es que conectes emocionalmente con otro, es que el sistema te muestra algo que tú no habías visto antes. Algo que te cambia, aunque sea un poquito. Y creo que eso es lo más potente que puede pasar en una experiencia interactiva.
 
