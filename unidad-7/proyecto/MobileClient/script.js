@@ -1,54 +1,23 @@
-const socket = io("/MobileClient");
-let myId = null;
-let myColor = { r: 255, g: 255, b: 255 };
-const meId = document.getElementById("meId");
-const meHex = document.getElementById("meHex");
+const socket = io();
 
-const picker = document.getElementById("picker");
-const debug = document.getElementById("debug");
+const picker = document.getElementById('picker');
+const me     = document.getElementById('me');
+const hexEl  = document.getElementById('hex');
+const debug  = document.getElementById('debug');
 
-function hexToRgbObject(hex) {
-  const v = hex.replace("#", "");
-  const bigint = parseInt(v, 16);
-  return {
-    r: (bigint >> 16) & 255,
-    g: (bigint >> 8) & 255,
-    b: bigint & 255
-  };
-}
+let myId = '—';
 
-function rgbToHex({ r, g, b }) {
-  return (
-    "#" +
-    [r, g, b]
-      .map(n => Math.max(0, Math.min(255, n | 0)).toString(16).padStart(2, "0"))
-      .join("")
-  );
-}
+function render(payload){ debug.textContent = JSON.stringify(payload, null, 2); }
 
-let current = { user_color: { r: 255, g: 255, b: 255 } };
+socket.on('connect', ()=> console.log('Mobile conectado'));
 
-function renderDebug(payload) {
-  debug.textContent = JSON.stringify(payload, null, 2);
-}
+socket.on('whoami', ({id}) => { myId = id; me.textContent = id.slice(0,6); });
 
-socket.on("state:init", (s) => {
-  current = s.cel;
-  picker.value = rgbToHex(s.cel.user_color);
-  renderDebug(s);
-});
+socket.on('state:init', (s)=> render(s));
+socket.on('state', payload => render(payload.state || payload));
 
-socket.on("state", (payload) => renderDebug(payload.state));
-socket.on("you", ({ id, color }) => {
-  myId = id;
-  myColor = color;
-  meId.textContent = id;
-  meHex.textContent = rgbToHex(color);
-  // sincroniza el picker con tu color real en el server
-  picker.value = rgbToHex(color);
-});
-
-picker.addEventListener("input", () => {
-  current.user_color = hexToRgbObject(picker.value);
-  socket.emit("update", current);
+picker.addEventListener('input', ()=>{
+  const hex = picker.value;
+  hexEl.textContent = hex;
+  socket.emit('mobile:colorHex', hex);
 });

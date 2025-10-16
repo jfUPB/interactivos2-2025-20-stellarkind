@@ -1,156 +1,152 @@
-// server.js
-import express from "express";
-import http from "http";
-import { Server as SocketIOServer } from "socket.io";
-import { WebSocketServer } from "ws";
+// server.js (ESM)
+import express from 'express';
+import http from 'http';
+import { Server } from 'socket.io';
+import path from 'path';
+import { fileURLToPath } from 'url';
 
+// --- util para __dirname en ESM ---
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+// --- app/http/io ---
 const app = express();
 const server = http.createServer(app);
-const io = new SocketIOServer(server, { cors: { origin: "*" } });
-const wss = new WebSocketServer({ server, path: "/td" });
+const io = new Server(server, {
+  cors: { origin: true, methods: ['GET', 'POST'] }
+});
 
-// ---------- Estado global ----------
-const state = {
-  desk:    { time: "day", season: 1, vantage: "outside" },
-  control: { speed: 0.5, density: 0.5, color: { r: 255, g: 255, b: 255 } },
-  // color por defecto para nuevos móviles (solo valor inicial)
-  cel:     { user_color: { r: 255, g: 255, b: 255 } }
+// ---------- estado en memoria ----------
+const aerials = new Map(); // Map<socketId, { id, color:{r,g,b}, hex, updatedAt }>
+const control = {
+  speed: 0.5,
+  density: 0.5,
+  color: { r: 255, g: 255, b: 255 }
 };
 
-// Cada móvil = antena propia
-const aerials = new Map(); // id -> { id, color:{r,g,b} }
+// ---------- helpers ----------
+const rgbToHex = ({ r, g, b }) =>
+  '#' + [r, g, b]
+    .map(v => Math.max(0, Math.min(255, Number(v) | 0)).toString(16).padStart(2,'0'))
+    .join('');
 
-const clamp = (v, a, b) => Math.max(a, Math.min(b, v | 0));
-const cleanColor = c => ({
-  r: clamp((c?.r ?? 255), 0, 255),
-  g: clamp((c?.g ?? 255), 0, 255),
-  b: clamp((c?.b ?? 255), 0, 255),
-});
+const hexToRgb = (hex) => {
+  const m = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(String(hex || ''));
+  if (!m) return { r: 255, g: 255, b: 255 };
+  return { r: parseInt(m[1],16), g: parseInt(m[2],16), b: parseInt(m[3],16) };
+};
 
-function validateAndAssign(part, incoming) {
-  if (!incoming || typeof incoming !== "object") return;
+// ---------- static (clientes) ----------
+app.use('/mobile',  express.static(path.join(__dirname, 'MobileClient')));
+app.use('/desktop', express.static(path.join(__dirname, 'DesktopClient')));
+app.use('/control', express.static(path.join(__dirname, 'Control')));
+app.use('/visuals', express.static(path.join(__dirname, 'Visuals')));
 
-  if (part === "desk") {
-    const t = incoming.time === "night" ? "night" : "day";
-    const s = [1,2,3,4].includes(incoming.season | 0) ? (incoming.season | 0) : state.desk.season;
-    const v = (incoming.vantage === "inside" || incoming.vantage === "outside")
-      ? incoming.vantage : state.desk.vantage;
-    state.desk = { time: t, season: s, vantage: v };
-  }
-
-  if (part === "control") {
-    const sp = Number(incoming.speed ?? state.control.speed);
-    const de = Number(incoming.density ?? state.control.density);
-    state.control.speed   = Math.max(0, Math.min(1, isNaN(sp) ? state.control.speed   : sp));
-    state.control.density = Math.max(0, Math.min(1, isNaN(de) ? state.control.density : de));
-    state.control.color   = cleanColor(incoming.color ?? state.control.color);
-  }
-
-  if (part === "cel" && incoming.user_color) {
-    // solo actualiza el default para nuevas conexiones
-    state.cel.user_color = cleanColor(incoming.user_color);
-  }
-}
-
-const aerialsArray = () => Array.from(aerials.values());
-function fullStateForTD() {
-  return { ...state, aerials: { count: aerials.size, devices: aerialsArray() } };
-}
-function fullStateForWeb() {
-  // Enviamos también la lista completa a las UIs
-  return { ...state, aerials: { count: aerials.size, devices: aerialsArray() } };
-}
-
-function broadcastToTD() {
-  const payload = JSON.stringify({ type: "fullState", data: fullStateForTD() });
-  wss.clients.forEach(ws => { if (ws.readyState === 1) ws.send(payload); });
-}
-function broadcastToWeb(part) {
-  const payload = { part, state: fullStateForWeb() };
-  io.of("/DesktopClient").emit("state", payload);
-  io.of("/MobileClient").emit("state",  payload);
-  io.of("/Control").emit("state",       payload);
-}
-
-// ---------- Namespaces ----------
-io.of("/DesktopClient").on("connection", socket => {
-  socket.emit("state:init", fullStateForWeb());
-  socket.on("update", payload => { validateAndAssign("desk", payload); broadcastToTD(); broadcastToWeb("desk"); });
-});
-
-io.of("/MobileClient").on("connection", socket => {
-  const id = socket.id.slice(0, 6);
-
-  // Crea su antena con color por defecto
-  aerials.set(id, { id, color: { ...state.cel.user_color } });
-
-  // Identidad propia del cliente
-  socket.emit("you", { id, color: aerials.get(id).color });
-
-  socket.emit("state:init", fullStateForWeb());
-  broadcastToTD(); broadcastToWeb("cel");
-
-  socket.on("update", payload => {
-    if (payload?.user_color) {
-      const col = cleanColor(payload.user_color);
-      const dev = aerials.get(id);
-      if (dev) dev.color = col;
-      socket.emit("you", { id, color: col }); // eco solo a ese cliente
-      broadcastToTD(); broadcastToWeb("cel");
-    }
-  });
-
-  socket.on("disconnect", () => {
-    aerials.delete(id);
-    broadcastToTD(); broadcastToWeb("cel");
-  });
-});
-
-io.of("/Control").on("connection", socket => {
-  socket.emit("state:init", fullStateForWeb());
-  socket.on("update", payload => { validateAndAssign("control", payload); broadcastToTD(); broadcastToWeb("control"); });
-});
-
-// ---------- WebSocket TD ----------
-wss.on("connection", ws => {
-  ws.send(JSON.stringify({ type: "fullState", data: fullStateForTD() }));
-  ws.on("message", msg => {
-    try {
-      const parsed = JSON.parse(msg.toString());
-      if (parsed?.part && parsed?.data) {
-        validateAndAssign(parsed.part, parsed.data);
-        broadcastToTD(); broadcastToWeb(parsed.part);
-      }
-    } catch (e) { console.error("WS TD parse error:", e); }
-  });
-});
-
-// ---------- API: lista completa de antenas ----------
-app.get("/api/aerials", (_req, res) => {
-  res.json({ count: aerials.size, devices: aerialsArray() });
-});
-
-// ---------- Estáticos SOLO en tus 3 rutas ----------
-app.use("/DesktopClient", express.static("public/DesktopClient"));
-app.use("/MobileClient",  express.static("public/MobileClient"));
-app.use("/Control",       express.static("public/Control"));
-// (por si también las tienes en la raíz del repo)
-app.use("/DesktopClient", express.static("DesktopClient"));
-app.use("/MobileClient",  express.static("MobileClient"));
-app.use("/Control",       express.static("Control"));
-
-app.get("/", (_req, res) => {
-  res.type("html").send(`
-    <h1>TD Bridge</h1>
+// ---------- landing raíz ----------
+app.get('/', (_req, res) => {
+  res.send(`
+    <h1>Clientes</h1>
     <ul>
-      <li><a href="/DesktopClient/">/DesktopClient/</a></li>
-      <li><a href="/MobileClient/">/MobileClient/</a></li>
-      <li><a href="/Control/">/Control/</a></li>
+      <li><a href="/mobile/">Mobile</a></li>
+      <li><a href="/desktop/">Desktop</a></li>
+      <li><a href="/control/">Control</a></li>
+      <li><a href="/visuals/">Visuals</a></li>
+      <li><a href="/api/aerials">API · Aerials</a></li>
     </ul>
-    <p>WS TD: <code>ws://HOST:3000/td</code></p>
-    <p>API antenas: <code>/api/aerials</code></p>
   `);
 });
 
+// ---------- API ----------
+app.get('/api/aerials', (_req, res) => {
+  res.json({ count: aerials.size, aerials: Array.from(aerials.values()) });
+});
+
+// ---------- SOCKET.IO ----------
+io.on('connection', (socket) => {
+  const referer = (socket.handshake.headers.referer || '').toLowerCase();
+
+  socket.emit('whoami', { id: socket.id });
+
+  // Room "Visuales" (para el renderer)
+  socket.on('messageClienteVisuales', () => {
+    socket.join('Visuales room');
+    console.log(`Client ${socket.id} joined 'Visuales room'`);
+  });
+
+  // CONTROL: slider individual
+  socket.on('slider_changed', (data) => {
+    if (data && typeof data.label === 'string') {
+      if (data.label === 'speed')   control.speed   = Number(data.value);
+      if (data.label === 'density') control.density = Number(data.value);
+    }
+    io.to('Visuales room').emit('slider_changed', data); // para Visuals
+    io.emit('state', { state: { control, aerials: Array.from(aerials.values()) } }); // debug/TD/UIs
+  });
+
+  // CONTROL/DESKTOP: estado completo
+  socket.on('update', (newControl) => {
+    if (newControl && typeof newControl === 'object') {
+      Object.assign(control, newControl);
+      io.emit('state', { state: { control, aerials: Array.from(aerials.values()) } });
+    }
+  });
+
+  // MOBILE: alta al conectar (detectado por URL /mobile)
+  const isMobileClient = referer.includes('/mobile');
+  if (isMobileClient) {
+    const hex = '#ffffff';
+    const rgb = hexToRgb(hex);
+    const aerial = { id: socket.id, color: rgb, hex, updatedAt: Date.now() };
+    aerials.set(socket.id, aerial);
+    console.log(`(MOBILE) Aerial creado: ${socket.id}`);
+
+    socket.emit('state:init', { control, aerials: Array.from(aerials.values()) });
+    io.emit('state', { state: { control, aerials: Array.from(aerials.values()) } });
+  }
+
+  // MOBILE: cambio color HEX
+  socket.on('mobile:colorHex', (hex) => {
+    const a = aerials.get(socket.id);
+    if (!a) return;
+    const rgb = hexToRgb(hex);
+    a.color = rgb;
+    a.hex = rgbToHex(rgb);
+    a.updatedAt = Date.now();
+    aerials.set(socket.id, a);
+
+    io.emit('state', { state: { control, aerials: Array.from(aerials.values()) } });
+    io.emit('color', { type:'color', id:socket.id, r:rgb.r, g:rgb.g, b:rgb.b, hex:a.hex, updatedAt:a.updatedAt });
+  });
+
+  // MOBILE: cambio color RGB
+  socket.on('mobile:colorRgb', (rgb) => {
+    const a = aerials.get(socket.id);
+    if (!a) return;
+    const safe = {
+      r: Math.max(0, Math.min(255, Number(rgb?.r) || 0)),
+      g: Math.max(0, Math.min(255, Number(rgb?.g) || 0)),
+      b: Math.max(0, Math.min(255, Number(rgb?.b) || 0)),
+    };
+    a.color = safe;
+    a.hex = rgbToHex(safe);
+    a.updatedAt = Date.now();
+    aerials.set(socket.id, a);
+
+    io.emit('state', { state: { control, aerials: Array.from(aerials.values()) } });
+    io.emit('color', { type:'color', id:socket.id, r:safe.r, g:safe.g, b:safe.b, hex:a.hex, updatedAt:a.updatedAt });
+  });
+
+  socket.on('disconnect', () => {
+    if (aerials.has(socket.id)) {
+      aerials.delete(socket.id);
+      console.log(`(MOBILE) Aerial removido: ${socket.id}`);
+      io.emit('state', { state: { control, aerials: Array.from(aerials.values()) } });
+    }
+  });
+});
+
+// ---------- start ----------
 const PORT = process.env.PORT || 3000;
-server.listen(PORT, "0.0.0.0", () => console.log(`Server on http://localhost:${PORT}`));
+server.listen(PORT, () => {
+  console.log(`Listening on http://localhost:${PORT}`);
+});
